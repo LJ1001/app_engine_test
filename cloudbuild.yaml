@@ -76,7 +76,7 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['tag', 'gcr.io/$PROJECT_ID/appenginetest:$COMMIT_SHA', 'gcr.io/$PROJECT_ID/appenginetest:latest']
 
-Create fresh test database & user
+# Create fresh test database & user
   - id: 'DeployApp'
     name: 'gcr.io/cloud-builders/gcloud'
     args:
