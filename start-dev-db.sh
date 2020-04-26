@@ -1,0 +1,1 @@
+docker run --rm --name appenginetest-dev -d -p 5432:5432 -e POSTGRES_DB=appenginetest_dev postgres:11.5-alpine
