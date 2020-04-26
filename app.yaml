@@ -4,3 +4,8 @@ runtime_config:
   release_app: app_engine_test
 beta_settings:
   cloud_sql_instances: handy-curve-263312:europe-west3:elixir-phoenix-test-1
+env_variables:
+  REDIS_HOST: '10.246.223.35'
+  REDIS_PORT: '6379'
+network:
+  name: default
