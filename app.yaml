@@ -1,0 +1,6 @@
+env: flex
+runtime: gs://elixir-runtime/elixir.yaml
+runtime_config:
+  release_app: app_engine_test
+beta_settings:
+  cloud_sq_instance: handy-curve-263312:europe-west3:elixir-phoenix-test-1
