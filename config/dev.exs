@@ -70,6 +70,6 @@ config :phoenix, :plug_init_mode, :runtime
 config :app_engine_test, AppEngineTest.Repo,
   username: "postgres",
   password: "postgres",
-  database: "app_engine_test_dev",
+  database: "appenginetest_dev",
   hostname: "localhost",
   pool_size: 10
