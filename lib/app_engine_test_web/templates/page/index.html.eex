@@ -5,4 +5,5 @@
 
 <section class="row">
   Number of users: <%= @count %>
+  Page Hits: <%= @page_hits %>
 </section>

@@ -73,3 +73,9 @@ config :app_engine_test, AppEngineTest.Repo,
   database: "appenginetest_dev",
   hostname: "localhost",
   pool_size: 10
+
+
+# Configure Redis 
+config :app_engine_test, AppEngineTest.Redis,
+  host: System.get_env("REDIS_HOST") || "localhost",
+  port: String.to_integer(System.get_env("REDIS_PORT") || "6379")

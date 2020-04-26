@@ -10,6 +10,9 @@ defmodule AppEngineTest.Application do
     children = [
       # Start the Ecto repository
       AppEngineTest.Repo,
+
+      AppEngineTest.Redis,
+
       # Start the endpoint when the application starts
       AppEngineTestWeb.Endpoint
       # Starts a worker by calling: AppEngineTest.Worker.start_link(arg)
