@@ -4,6 +4,16 @@ defmodule AppEngineTest.MixProject do
   def project do
     [
       app: :app_engine_test,
+      releases: [
+        app_engine_test: [
+          include_erts: true,
+          include_executables_for: [:unix],
+          applications: [
+            runtime_tools: :permanent
+          ]
+        ]
+      ],
+      version: "0.0.1",
       version: "0.1.0",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
