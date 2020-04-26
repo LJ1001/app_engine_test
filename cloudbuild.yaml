@@ -1,0 +1,94 @@
+steps:
+  # Pull cached images to speed up build
+- id: 'Pull AppEngineTest Builder Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', 'gcr.io/$PROJECT_ID/appenginetest:builder']
+- id: 'Pull AppEngineTest Dependency Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', 'gcr.io/$PROJECT_ID/appenginetest:deps']
+- id: 'Pull AppEngineTest Frontend Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', 'gcr.io/$PROJECT_ID/appenginetest:frontend']
+- id: 'Pull AppEngineTest Releaser Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', 'gcr.io/$PROJECT_ID/appenginetest:releaser']
+- id: 'Pull AppEngineTest Latest Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', 'gcr.io/$PROJECT_ID/appenginetest:latest']
+
+  # Build new Images based on commit
+- id: 'Build new AppEngineTest Builder Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-t'
+    - 'gcr.io/$PROJECT_ID/appenginetest:builder'
+    - '--target=builder'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:builder'
+    - '.'
+- id: 'Build new AppEngineTest Dependency Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-t'
+    - 'gcr.io/$PROJECT_ID/appenginetest:deps'
+    - '--target=deps'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:builder'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:deps'
+    - '.'
+- id: 'Build new AppEngineTest Frontend Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-t'
+    - 'gcr.io/$PROJECT_ID/appenginetest:frontend'
+    - '--target=frontend'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:builder'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:deps'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:frontend'
+    - '.'
+- id: 'Build new AppEngineTest Releaser Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-t'
+    - 'gcr.io/$PROJECT_ID/appenginetest:releaser'
+    - '--target=releaser'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:builder'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:deps'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:frontend'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:releaser'
+    - '.'
+- id: 'Build new AppEngineTest Latest Image (with COMMIT_SHA)'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-t'
+    - 'gcr.io/$PROJECT_ID/appenginetest:$COMMIT_SHA'
+    - '--target=runner'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:builder'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:deps'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:frontend'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:releaser'
+    - '--cache-from=gcr.io/$PROJECT_ID/appenginetest:latest'
+    - '.'
+- id: 'Tag AppEngineTest Latest Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/appenginetest:$COMMIT_SHA', 'gcr.io/$PROJECT_ID/appenginetest:latest']
+
+Create fresh test database & user
+  - id: 'DeployApp'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'app'
+      - 'deploy'
+      - '--image-url=gcr.io/$PROJECT_ID/appenginetest:$COMMIT_SHA'
+    waitFor: ['Tag AppEngineTest Latest Image']
+
+images:
+- 'gcr.io/$PROJECT_ID/appenginetest:builder'
+- 'gcr.io/$PROJECT_ID/appenginetest:deps'
+- 'gcr.io/$PROJECT_ID/appenginetest:frontend'
+- 'gcr.io/$PROJECT_ID/appenginetest:releaser'
+- 'gcr.io/$PROJECT_ID/appenginetest:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/appenginetest:latest'
